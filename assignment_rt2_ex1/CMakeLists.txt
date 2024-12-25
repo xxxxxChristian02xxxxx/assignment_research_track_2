@@ -139,6 +139,8 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
  add_executable(action_client_node src/client_action.cpp)
+ add_executable(last_coord_service_node src/last_target_coordinates_service.cpp)
+
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -149,10 +151,10 @@ include_directories(
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(action_client_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
+add_dependencies(last_coord_service_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 ## Specify libraries to link a library or executable target against
 target_link_libraries(action_client_node ${catkin_LIBRARIES})
-
+target_link_libraries(last_coord_service_node ${catkin_LIBRARIES})
 
 #############
 ## Install ##
