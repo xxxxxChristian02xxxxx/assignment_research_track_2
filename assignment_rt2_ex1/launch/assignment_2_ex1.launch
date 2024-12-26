@@ -3,8 +3,9 @@
 	<include file="$(find assignment_2_2024)/launch/assignment1.launch" />
 	
 	<!-- launching action client node -->
-	<node name ="action_client_target" 	 type ="client_action.cpp" 		 	pkg="assignment_rt2_ex1" />
+	<node name="client_action_node" type="action_client_node" pkg="assignment_rt2_ex1" />
+
 	
 	<!-- launching action service node -->
-	<node name ="service_node"		 type ="last_target_coordinates_service.cpp" 	pkg="assignment_rt2_ex1" />
+	<node name ="service_node"		 type ="last_coord_service_node" 	pkg="assignment_rt2_ex1" />
 </launch>

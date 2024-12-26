@@ -138,7 +138,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
- add_executable(action_client_node src/client_action.cpp)
+ add_executable(action_client_node src/client_action_node.cpp)
  add_executable(last_coord_service_node src/last_target_coordinates_service.cpp)
 
 
