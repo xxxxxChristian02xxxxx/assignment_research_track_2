@@ -14,6 +14,7 @@
  
 // creation of the custom message
 assignment_rt2_ex1::M_vel_pos vel_pose;
+ros::Publisher pub_pos_vel;
 int moving_toggle = false;
 assignment_2_2024::PlanningActionFeedback::ConstPtr fdk;
 
@@ -22,19 +23,22 @@ void messageCallback(const nav_msgs::Odometry::ConstPtr& msg) {
     vel_pose.y = msg->pose.pose.position.y;
     vel_pose.vel_x = msg->twist.twist.linear.x;
     vel_pose.vel_z = msg->twist.twist.angular.z;
+    
 }
 
 void decide_action_in_moving( actionlib::SimpleActionClient<assignment_2_2024::PlanningAction>& client){
-	int user_block_decision=0;
- 	std::cout<<"The robot is moving \n1 -- cancel the taget "<< std::endl;	
- 	std::cin >> user_block_decision;
- 	if (user_block_decision == 1){
- 		client.cancelGoal();
- 		ros::Duration(1).sleep();
- 		moving_toggle = true;
- 	}else{
- 		moving_toggle=false;
- 		}
+	 int user_block_decision=0;
+
+	 std::cout<<"The robot is moving \n1 -- cancel the taget "<< std::endl;	
+	 std::cin >> user_block_decision;
+	 if (user_block_decision == 1){
+	 	client.cancelGoal();
+	 	ros::Duration(1).sleep();
+	 }
+
+	 
+ 		
+ 		
 }
 
 
@@ -67,7 +71,7 @@ assignment_2_2024::PlanningGoal set_target(){
 }
 void feedbackCallback(const assignment_2_2024::PlanningActionFeedback::ConstPtr& msg) {
     fdk = msg;
-    	   	 //ROS_INFO("Feedback ricevuto: %s", fdk->feedback.stat.c_str());
+    //ROS_INFO("Feedback ricevuto: %s", fdk->feedback.stat.c_str());
  
 }
 
@@ -86,37 +90,41 @@ int main (int argc, char** argv){
 	client.waitForServer();
 	
 	// Publisher to publish the velocity and position
-	ros::Publisher pub_pos_vel = nh.advertise<assignment_rt2_ex1::M_vel_pos>("new_topic",10); // change name 
+	pub_pos_vel = nh.advertise<assignment_rt2_ex1::M_vel_pos>("pos_vel_custom_mess",100); 
 
 	// subscriber on odom
 	ros::Subscriber sub = nh.subscribe("odom", 1000, messageCallback);
 	ros::Subscriber feedback_sub = nh.subscribe("/reaching_goal/feedback", 10, feedbackCallback);
 
+
 	assignment_2_2024::PlanningGoal goal = set_target();
         client.sendGoal(goal);
-	
  	while(ros::ok()){
  		pub_pos_vel.publish(vel_pose);
- 		
  		ros::spinOnce();
- 	if (fdk != nullptr) {
-	   	 ROS_INFO("Feedback ricevuto: %s", fdk->feedback.stat.c_str());
-	   	 if (fdk->feedback.stat == "Target reached!" ||fdk->feedback.stat == "Target cancelled!" ) {
-			goal = set_target();
-			client.sendGoal(goal);			  
-			
-		} else if (fdk->feedback.stat == "State 0: go to point" || fdk->feedback.stat == "State 1: avoid obstacle") {
-			decide_action_in_moving(client);
-			//if (moving_toggle){
-				ros::spinOnce();
-			//	moving_toggle = false;
-				continue;
-			//}
+
+	 	if (fdk != nullptr) {
+		   	 ROS_INFO("Feedback ricevuto: %s", fdk->feedback.stat.c_str());
+		   	 if (fdk->feedback.stat == "Target reached!" ||fdk->feedback.stat == "Target cancelled!" ) {
+				goal = set_target();
+				client.sendGoal(goal);	
+
+				
+			} else if (fdk->feedback.stat == "State 0: go to point" || fdk->feedback.stat == "State 1: avoid obstacle") {
+				decide_action_in_moving(client);
+				//if (moving_toggle){
+					ros::spinOnce();
+				//	moving_toggle = false;
+					continue;
+				//}
+			}
+			fdk = nullptr;
 		}
-		fdk = nullptr;
-	}
  	}
  	
 	return 0;
 }
+
+
+
 
