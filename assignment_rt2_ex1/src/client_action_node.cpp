@@ -15,7 +15,6 @@
 // creation of the custom message
 assignment_rt2_ex1::M_vel_pos vel_pose;
 ros::Publisher pub_pos_vel;
-int moving_toggle = false;
 assignment_2_2024::PlanningActionFeedback::ConstPtr fdk;
 
 void messageCallback(const nav_msgs::Odometry::ConstPtr& msg) {
@@ -30,15 +29,15 @@ void decide_action_in_moving( actionlib::SimpleActionClient<assignment_2_2024::P
 	 int user_block_decision=0;
 
 	 std::cout<<"The robot is moving \n1 -- cancel the taget "<< std::endl;	
-	 std::cin >> user_block_decision;
+	while (!(std::cin >> user_block_decision)) {  
+        	std::cin.clear();  
+       	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+       	std::cout<<"The robot is moving \n1 -- cancel the taget "<< std::endl;	  
+    	}
 	 if (user_block_decision == 1){
 	 	client.cancelGoal();
 	 	ros::Duration(1).sleep();
-	 }
-
-	 
- 		
- 		
+	 } 		
 }
 
 
@@ -55,24 +54,21 @@ assignment_2_2024::PlanningGoal set_target(){
  		std::cout << "Enter the target coordinates:" << std::endl; 
  		std::cout << "X:"; std::cin >> target_pos_x;
   		std::cout << "Y:"; std::cin >> target_pos_y;
-  		std::cout << "Orientation:"; std::cin >> target_ore_z;
  		
  		// building the goal 
  		assignment_2_2024::PlanningGoal goal;
  		goal.target_pose.pose.position.x = target_pos_x;
  		goal.target_pose.pose.position.y = target_pos_y;
- 		goal.target_pose.pose.orientation.z = target_ore_z;
+
+		/*
+		nh.setParam("/last_target/x",target_pos_x);
+		nh.setParam("/last_target/y",target_pos_y);
+		*/
  		
-		// memorizing the parameters int he server 
-       	nh.setParam("/last_target/x", target_pos_x);
-        	nh.setParam("/last_target/y", target_pos_y);
-        	nh.setParam("/last_target/orientation", target_ore_z);
         	return goal;
 }
 void feedbackCallback(const assignment_2_2024::PlanningActionFeedback::ConstPtr& msg) {
     fdk = msg;
-    //ROS_INFO("Feedback ricevuto: %s", fdk->feedback.stat.c_str());
- 
 }
 
  
@@ -104,7 +100,7 @@ int main (int argc, char** argv){
  		ros::spinOnce();
 
 	 	if (fdk != nullptr) {
-		   	 ROS_INFO("Feedback ricevuto: %s", fdk->feedback.stat.c_str());
+
 		   	 if (fdk->feedback.stat == "Target reached!" ||fdk->feedback.stat == "Target cancelled!" ) {
 				goal = set_target();
 				client.sendGoal(goal);	
@@ -112,11 +108,8 @@ int main (int argc, char** argv){
 				
 			} else if (fdk->feedback.stat == "State 0: go to point" || fdk->feedback.stat == "State 1: avoid obstacle") {
 				decide_action_in_moving(client);
-				//if (moving_toggle){
 					ros::spinOnce();
-				//	moving_toggle = false;
-					continue;
-				//}
+					continue;	
 			}
 			fdk = nullptr;
 		}
