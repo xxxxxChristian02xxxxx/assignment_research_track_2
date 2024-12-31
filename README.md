@@ -44,7 +44,7 @@ If the feedback is not nullptr and i have reached the goal or it has been cancel
 #### Generated RQT Graph
 To visualize the node and topic connections in this package, the following graph has been generated:
 
-![RQT Graph](./grafo_rt1_ex2.png)
+![RQT Graph](./grafo_rt1_ex1.png)
 
 ---
 
