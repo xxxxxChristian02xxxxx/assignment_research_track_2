@@ -6,12 +6,11 @@
 bool show_last_target_cooridinates(assignment_rt2_ex1::Service_target_coordinates::Request &req,assignment_rt2_ex1::Service_target_coordinates::Response &res){
 	ros::NodeHandle nh;
 	// checking if the parameters are present
-	if (nh.hasParam("/des_pos_y") && nh.hasParam("/des_pos_x") /*nh.hasParam("/last_target/y") && nh.hasParam("/last_target/x")*/){
+	if (nh.hasParam("/des_pos_y") && nh.hasParam("/des_pos_x") ){
 		// retreivng the parameters and giving thema as response
 		nh.getParam("/des_pos_x", res.target_pos_x) ;
 		nh.getParam("/des_pos_y", res.target_pos_y) ;
-		//nh.getParam("/last_target/x", res.target_pos_x) ;
-		//nh.getParam("/last_target/y", res.target_pos_y) ;
+
 		return true;
 	} else {
       		return false;
@@ -22,6 +21,7 @@ bool show_last_target_cooridinates(assignment_rt2_ex1::Service_target_coordinate
  {
  	ros::init(argc, argv, "last_target_coordinates_sent_server"); 
  	ros::NodeHandle n;
+ 	// initializ the servcice and binding the function
  	ros::ServiceServer service = n.advertiseService("/last_target_coordinates_sent_server",show_last_target_cooridinates);
 	ros::spin();
  	return 0;

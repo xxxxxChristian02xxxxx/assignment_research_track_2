@@ -28,11 +28,11 @@ void messageCallback(const nav_msgs::Odometry::ConstPtr& msg) {
 void decide_action_in_moving( actionlib::SimpleActionClient<assignment_2_2024::PlanningAction>& client){
 	 int user_block_decision=0;
 
-	 std::cout<<"The robot is moving \n1 -- cancel the taget "<< std::endl;	
+	 std::cout<<"The robot is moving \n1 -- cancel the target "<< std::endl;	
 	while (!(std::cin >> user_block_decision)) {  
         	std::cin.clear();  
        	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-       	std::cout<<"The robot is moving \n1 -- cancel the taget "<< std::endl;	  
+       	std::cout<<"The robot is moving \n1 -- cancel the target "<< std::endl;	  
     	}
 	 if (user_block_decision == 1){
 	 	client.cancelGoal();
@@ -60,10 +60,7 @@ assignment_2_2024::PlanningGoal set_target(){
  		goal.target_pose.pose.position.x = target_pos_x;
  		goal.target_pose.pose.position.y = target_pos_y;
 
-		/*
-		nh.setParam("/last_target/x",target_pos_x);
-		nh.setParam("/last_target/y",target_pos_y);
-		*/
+
  		
         	return goal;
 }
@@ -107,9 +104,10 @@ int main (int argc, char** argv){
 
 				
 			} else if (fdk->feedback.stat == "State 0: go to point" || fdk->feedback.stat == "State 1: avoid obstacle") {
+				
 				decide_action_in_moving(client);
-					ros::spinOnce();
-					continue;	
+					//ros::spinOnce();
+					//continue;	
 			}
 			fdk = nullptr;
 		}
