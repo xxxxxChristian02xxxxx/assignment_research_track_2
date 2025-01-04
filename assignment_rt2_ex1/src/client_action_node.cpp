@@ -17,6 +17,7 @@ assignment_rt2_ex1::M_vel_pos vel_pose;
 ros::Publisher pub_pos_vel;
 assignment_2_2024::PlanningActionFeedback::ConstPtr fdk;
 
+// 
 void messageCallback(const nav_msgs::Odometry::ConstPtr& msg) {
     vel_pose.x = msg->pose.pose.position.x;
     vel_pose.y = msg->pose.pose.position.y;
@@ -98,12 +99,13 @@ int main (int argc, char** argv){
 
 	 	if (fdk != nullptr) {
 
+			// making the goal if it is not moving
 		   	 if (fdk->feedback.stat == "Target reached!" ||fdk->feedback.stat == "Target cancelled!" ) {
 				goal = set_target();
 				client.sendGoal(goal);	
 
 				
-			} else if (fdk->feedback.stat == "State 0: go to point" || fdk->feedback.stat == "State 1: avoid obstacle") {
+			} else if (fdk->feedback.stat == "State 0: go to point" || fdk->feedback.stat == "State 1: avoid obstacle") { // giving possibility to start again if moving
 				
 				decide_action_in_moving(client);
 					//ros::spinOnce();
