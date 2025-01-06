@@ -32,7 +32,7 @@ If the feedback is not nullptr and i have reached the goal or it has been cancel
 
 
 
-## LAst tartget coodrinates service
+## Last tartget coodrinates service
 
 #### Methods:
 - `show_last_target_cooridinates(assignment_rt2_ex1::Service_target_coordinates::Request &req,assignment_rt2_ex1::Service_target_coordinates::Response &res)`:  
